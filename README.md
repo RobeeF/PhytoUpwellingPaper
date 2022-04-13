@@ -47,8 +47,8 @@ setwd('replace/this/path/with/the/root/directory/path/on/your/computer')
 ## Result reproduction
 - Start by executing main.py (you may have to install additional packages)
 - Run size_class_model.R. Again you may have to install additional packages. Please be careful to install version 1.1.0 of the ssPopModel package. The size-structure model-related results would not be reproducible otherwise
-- Run SN_analysis.py
 - Run concatenate_mu_loss.py
+- Run SN_analysis.py
 - Run blooms.py
 - The other scripts can be run in any order
 
