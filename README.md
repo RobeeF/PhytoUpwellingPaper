@@ -4,6 +4,17 @@
   <img src="summary.png" alt="Paper_summary"/>
 </div>
 
+<div align="center">
+  <!-- Python version -->
+  <a href="https://pypi.python.org/pypi/">
+    <img src="https://img.shields.io/badge/python-3.7-blue.svg?style=for-the-badge" alt="PyPI version"/>
+  </a>
+  <!-- License -->
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="http://img.shields.io/:license-mit-ff69b4.svg?style=for-the-badge" alt="license"/>
+  </a>
+</div>
+
 <br/>
 
 ## Installation prerequisites
