@@ -4,6 +4,8 @@
   <img src="summary.png" alt="Paper_summary"/>
 </div>
 
+<br/>
+
 <div align="center">
   <!-- Python version -->
   <a href="https://pypi.python.org/pypi/">
