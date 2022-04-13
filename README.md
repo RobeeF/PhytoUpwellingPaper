@@ -1,4 +1,4 @@
-# PhytoUpwelling_paper
+# PhytoUpwellingPaper
 
 <div align="center">
   <img src="summary.png" alt="Paper_summary"/>
