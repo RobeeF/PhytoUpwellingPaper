@@ -15,6 +15,10 @@
   <a href="https://opensource.org/licenses/MIT">
     <img src="http://img.shields.io/:license-mit-ff69b4.svg?style=for-the-badge" alt="license"/>
   </a>
+   <!-- Zenodo -->
+  <a href="https://zenodo.org/badge/latestdoi/481310712">
+      <img src="https://zenodo.org/badge/481310712.svg" alt="DOI">
+  </a>
 </div>
 
 <br/>
