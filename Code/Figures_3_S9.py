@@ -30,6 +30,7 @@ ylims = {'reaction_delay': [0,9], 'reaction_duration': [0,9], 'reaction_magnitud
          'relaxation_magnitude': [-100,130]}
 
 pfg_entities = ['abundance', 'biomass']
+pfg_list = [pfg.upper() for pfg in pfg_colors.keys()]
 
 responses = {}
 for pfg_entity in pfg_entities:
@@ -39,7 +40,6 @@ for pfg_entity in pfg_entities:
     #***************************************
     path = join('Results', 'responses', pfg_entity + '.csv')
     event_df = pd.read_csv(path, parse_dates = dates_col)     
-    pfg_list = [pfg.upper() for pfg in pfg_colors.keys()]
     
     #***************************************
     # Store the quantities of interest
@@ -49,7 +49,7 @@ for pfg_entity in pfg_entities:
                                                    'relaxation_magnitude', 'pfg', 'WUI_start']) 
     for pfg in pfg_list:
         # Trigger length
-        reaction_delay =  (event_df[pfg + '_start'] - event_df['Tmax']).apply(lambda x: x.total_seconds() / (3600 * 24))
+        reaction_delay = (event_df[pfg + '_start'] - event_df['Tmax']).apply(lambda x: x.total_seconds() / (3600 * 24))
         reaction_delay = np.where(event_df[pfg + '_phyto_react_before_T'], np.nan, reaction_delay)
     
         # Trigger time
@@ -66,15 +66,14 @@ for pfg_entity in pfg_entities:
         df['pfg'] = pfg
         df['WUI_start'] = event_df['WUI_start']
         
-        response = response.append(df)
+        response = pd.concat([response, df])
             
-        
     response = response[~response.isna().any(1)]
     response['pfg'] = response['pfg'].apply(lambda x: str.capitalize(x))
 
     responses[pfg_entity] = deepcopy(response)
      
-    
+
 #========================================
 # Draw the boxplots
 #========================================
@@ -144,3 +143,47 @@ fig_path = join('Figures', 'Reaction_relaxation.png')
 plt.savefig(fig_path)
 plt.show()
     
+
+#========================================
+# Summary table
+#========================================    
+
+path = join('Results', 'responses', 'abundance' + '.csv')
+abundance_df = pd.read_csv(path, parse_dates = dates_col, index_col=['window_start', 'window_end'])   
+path = join('Results', 'responses', 'biomass' + '.csv')
+biomass_df = pd.read_csv(path, parse_dates = dates_col, index_col=['window_start', 'window_end'])   
+
+# Set unindentified ruptures to Nan
+for pfg in pfg_list:
+    col_to_nans = [pfg + 'median_before', pfg + 'median_during', pfg + 'median_after']
+    abundance_df.loc[abundance_df[pfg + '_phyto_react_before_T'], col_to_nans] = np.nan
+    biomass_df.loc[biomass_df[pfg + '_phyto_react_before_T'], col_to_nans] = np.nan
+
+cols_to_keep = ['ORGNANOmedian_before',
+'ORGNANOmedian_during', 'ORGNANOmedian_after', 
+'ORGPICOPROmedian_before', 'ORGPICOPROmedian_during', 
+'ORGPICOPROmedian_after',  'REDNANOmedian_before', 
+'REDNANOmedian_during', 'REDNANOmedian_after', 
+'REDPICOEUKmedian_before', 'REDPICOEUKmedian_during', 
+'REDPICOEUKmedian_after', 'REDPICOPROmedian_before', 
+'REDPICOPROmedian_during', 'REDPICOPROmedian_after']
+
+cols_aliases = ['ORGNANO pre-reaction',
+'ORGNANO reaction', 'ORGNANO relaxation', 
+'ORGPICOPRO pre-reaction', 'ORGPICOPRO reaction', 
+'ORGPICOPRO relaxation',  'REDNANO pre-reaction', 
+'REDNANO reaction', 'REDNANO relaxation', 
+'REDPICOEUK pre-reaction', 'REDPICOEUK reaction', 
+'REDPICOEUK relaxation', 'REDPICOPRO pre-reaction', 
+'REDPICOPRO reaction', 'REDPICOPRO relaxation']
+
+# Round and convert to the right unit
+abundance_df = (abundance_df[cols_to_keep] * 10 ** 3).round(2) 
+abundance_df.columns = cols_aliases
+abundance_df.to_csv(join('Results', 'abundances_all_events.csv'))
+
+# !!! Scientific notation ?
+biomass_df = biomass_df[cols_to_keep] * 10 ** -9
+biomass_df.columns = cols_aliases
+biomass_df.round(8).to_csv(join('Results', 'biomass_all_events.csv'))
+
