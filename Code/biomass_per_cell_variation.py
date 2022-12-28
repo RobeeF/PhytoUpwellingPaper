@@ -9,14 +9,15 @@ import os
 import pandas as pd
 from os.path import join
 
-pfgs = ['ORGNANO', 'ORGPICOPRO', 'REDNANO', 'REDPICOEUK', 'REDPICOPRO']
+#pfgs = ['ORGNANO', 'ORGPICOPRO', 'REDNANO', 'REDPICOEUK', 'REDPICOPRO']
+pfgs = ['OraNano','OraPicoProk','RedNano','RedPico','RedPicoProk']
 
 dates_col = ['WUI_start', 'WUI_end', 'T_start', 'T_end', 'Tmax', 'Tmin',
-       'window_start', 'window_end', 'ORGNANO_start',
-       'ORGNANO_end', 'ORGPICOPRO_start',
-       'ORGPICOPRO_end', 'REDNANO_start', 'REDNANO_end',
-       'REDPICOEUK_start',
-       'REDPICOEUK_end', 'REDPICOPRO_start', 'REDPICOPRO_end']
+       'window_start', 'window_end', 'OraNano_start',
+       'OraNano_end', 'OraPicoProk_start',
+       'OraPicoProk_end', 'RedNano_start', 'RedNano_end',
+       'RedPico_start',
+       'RedPico_end', 'RedPicoProk_start', 'RedPicoProk_end']
 
 os.chdir(r'C:\Users\rfuchs\Documents\GitHub\PhytoUpwelling_paper')
 

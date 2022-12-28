@@ -51,11 +51,11 @@ pfg_list = gr.columns
          
 # Import the events temporal boundaries
 dates_col = ['WUI_start', 'WUI_end', 'T_start', 'T_end', 'Tmax', 'Tmin',
-       'window_start', 'window_end', 'ORGNANO_start',
-       'ORGNANO_end', 'ORGPICOPRO_start',
-       'ORGPICOPRO_end', 'REDNANO_start', 'REDNANO_end',
-       'REDPICOEUK_start',
-       'REDPICOEUK_end', 'REDPICOPRO_start', 'REDPICOPRO_end']
+       'window_start', 'window_end', 'OraNano_start',
+       'OraNano_end', 'OraPicoProk_start',
+       'OraPicoProk_end', 'RedNano_start', 'RedNano_end',
+       'RedPico_start',
+       'RedPico_end', 'RedPicoProk_start', 'RedPicoProk_end']
 
 event_df = pd.read_csv(join('Results', 'responses', entity_tracked + '.csv'),\
                        parse_dates=dates_col)     
@@ -70,7 +70,7 @@ unstrat = stratif_dict['Unstratified']
 stps = pd.read_csv(join('Data', 'INSITU','stps_1H.csv'),\
                    parse_dates = ['date'], index_col = 'date')
 
-pfg_colors = dict(zip(['Orgnano', 'Orgpicopro', 'Rednano', 'Redpicoeuk', 'Redpicopro'],\
+pfg_colors = dict(zip(['OraNano', 'OraPicoProk', 'RedNano', 'RedPicoProk', 'RedPico'],\
                       ['#9467bd', '#1f77b4', '#2ca02c', '#d62728', 'orange']))
 
 
@@ -78,14 +78,14 @@ pfg_colors = dict(zip(['Orgnano', 'Orgpicopro', 'Rednano', 'Redpicoeuk', 'Redpic
 # Differenciating between reaction and relaxation 
 #=========================================================================
 
-gr_T = pd.DataFrame(index = pfg_list.str.capitalize(),\
+gr_T = pd.DataFrame(index = pfg_list,\
                     columns = ['Pre-reaction', 'Reaction', 'Relaxation'])
-pvals_T = pd.DataFrame(index = pfg_list.str.capitalize(),\
+pvals_T = pd.DataFrame(index = pfg_list,\
                     columns = ['Pre-reaction', 'Reaction', 'Relaxation'])
 
-gr_ent = pd.DataFrame(index = pfg_list.str.capitalize(),\
+gr_ent = pd.DataFrame(index = pfg_list,\
                     columns = ['Pre-reaction', 'Reaction', 'Relaxation'])
-pvals_ent = pd.DataFrame(index = pfg_list.str.capitalize(),\
+pvals_ent = pd.DataFrame(index = pfg_list,\
                     columns = ['Pre-reaction', 'Reaction', 'Relaxation'])
 
 for pfg in pfg_list:
@@ -114,8 +114,8 @@ for pfg in pfg_list:
     for phase, group in gr_entity_T.groupby('phase'):
         
         sp_test = spearmanr(group[pfg + '_growth rate'], group['T'])
-        gr_T.loc[pfg.capitalize(), phase] = sp_test.correlation
-        pvals_T.loc[pfg.capitalize(), phase] = sp_test.pvalue     
+        gr_T.loc[pfg, phase] = sp_test.correlation
+        pvals_T.loc[pfg, phase] = sp_test.pvalue     
         
      
     #*********************************
@@ -125,15 +125,15 @@ for pfg in pfg_list:
     for phase, group in gr_entity_T.groupby('phase'):
         
         sp_test = spearmanr(group[pfg + '_growth rate'], group[pfg + '_' + entity_tracked])
-        gr_ent.loc[pfg.capitalize(), phase] = sp_test.correlation
-        pvals_ent.loc[pfg.capitalize(), phase] = sp_test.pvalue     
+        gr_ent.loc[pfg, phase] = sp_test.correlation
+        pvals_ent.loc[pfg, phase] = sp_test.pvalue     
         
 
 #=====================================================================
 # Compare the variation in growth rates between the different phases
 #=====================================================================
 
-median_gr_phase = pd.DataFrame(index = pfg_list.str.capitalize(),\
+median_gr_phase = pd.DataFrame(index = pfg_list,\
                                columns = ['Pre-reaction', 'Reaction', 'Relaxation'])
 
 for pfg in pfg_list:
@@ -154,7 +154,7 @@ for pfg in pfg_list:
     gg = gg.set_index('window_start').replace([np.inf,\
                                 -np.inf, pd.NaT], np.nan).dropna(how = 'all')
     
-    median_gr_phase.loc[pfg.capitalize()] = gg.mean()
+    median_gr_phase.loc[pfg] = gg.mean()
         
     # Confirm with a Kruskal
     all_ = gg[['Pre-reaction', 'Reaction', 'Relaxation']].dropna(how = 'any')
@@ -172,9 +172,9 @@ for pfg in pfg_list:
 # Loss vs mu 
 #=========================================================
 
-corr = pd.DataFrame(index = pfg_list.str.capitalize(),\
+corr = pd.DataFrame(index = pfg_list,\
                     columns = ['Pre-reaction', 'Reaction', 'Relaxation'])
-pvals = pd.DataFrame(index = pfg_list.str.capitalize(),\
+pvals = pd.DataFrame(index = pfg_list,\
                     columns = ['Pre-reaction', 'Reaction', 'Relaxation'])
 
 for pfg in pfg_list:
@@ -194,8 +194,8 @@ for pfg in pfg_list:
     
     for phase, group in mu_loss.groupby('phase'):
         sp_test = spearmanr(group[pfg + '_gr'], group[pfg + '_loss'])
-        corr.loc[pfg.capitalize(), phase] = sp_test.correlation
-        pvals.loc[pfg.capitalize(), phase] = sp_test.pvalue
+        corr.loc[pfg, phase] = sp_test.correlation
+        pvals.loc[pfg, phase] = sp_test.pvalue
 
 #===============================
 # Heatmaps
@@ -203,14 +203,14 @@ for pfg in pfg_list:
 
 sns.heatmap(24 * median_gr_phase.replace([np.nan], 0),\
             annot = True, vmax = 1.3)
-plt.title(entity_tracked.capitalize())
+plt.title(entity_tracked)
 plt.savefig(join('Figures', entity_tracked + '_division_per_phase.png'))
 plt.show()
 
 
 sns.heatmap(corr.replace([np.nan], 0), mask = pvals.replace([np.nan], 1) > 0.05,\
             annot = True, vmin = -0.3, vmax = 0.6)
-plt.title(entity_tracked.capitalize())
+plt.title(entity_tracked)
 plt.savefig(join('Figures', entity_tracked + '_division_vs_loss.png'))
 plt.show()
 

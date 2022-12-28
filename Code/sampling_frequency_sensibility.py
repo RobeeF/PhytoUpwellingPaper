@@ -21,11 +21,11 @@ os.chdir('C:/Users/rfuchs/Documents/GitHub/PhytoUpwelling_paper')
 
 
 dates_col = ['WUI_start', 'WUI_end', 'T_start', 'T_end', 'Tmax', 'Tmin',
-       'window_start', 'window_end', 'ORGNANO_start',
-       'ORGNANO_end', 'ORGPICOPRO_start',
-       'ORGPICOPRO_end', 'REDNANO_start', 'REDNANO_end',
-       'REDPICOEUK_start',
-       'REDPICOEUK_end', 'REDPICOPRO_start', 'REDPICOPRO_end']
+       'window_start', 'window_end', 'OraNano_start',
+       'OraNano_end', 'OraPicoProk_start',
+       'OraPicoProk_end', 'RedNano_start', 'RedNano_end',
+       'RedPico_start',
+       'RedPico_end', 'RedPicoProk_start', 'RedPicoProk_end']
 
 #############################################################################
 # Temperature and phyto 
@@ -66,7 +66,7 @@ ref_biomass = pd.read_csv(path, parse_dates = dates_col)
 # Number of breakpoints to look for rupture detection
 n_bkps = 2  
 pfg_entities = ['abundance', 'biomass']
-pfg_colors = dict(zip(['Orgnano', 'Orgpicopro', 'Rednano', 'Redpicoeuk', 'Redpicopro'],\
+pfg_colors = dict(zip(['OraNano', 'OraPicoProk', 'RedNano', 'RedPico', 'RedPicoProk'],\
                       ['#9467bd', '#1f77b4', '#2ca02c', '#d62728', 'orange']))
 
 lag_res = {'abundance': {}, 'biomass': {}} 
@@ -95,9 +95,9 @@ for pfg_entity in pfg_entities:
             event_df[pfg + '_start'] = pd.NaT
             event_df[pfg + '_end'] = pd.NaT
             event_df[pfg + '_phyto_react_before_T'] = np.nan
-            event_df[pfg + 'median_before'] = np.nan
-            event_df[pfg + 'median_during'] = np.nan
-            event_df[pfg + 'median_after'] = np.nan
+            event_df[pfg + '_median_before'] = np.nan
+            event_df[pfg + '_median_during'] = np.nan
+            event_df[pfg + '_median_after'] = np.nan
              
         #====================================
         # Iterate through the events
@@ -161,9 +161,9 @@ for pfg_entity in pfg_entities:
                 median_after = pfg_data.loc[pfg_data.index >= result_index[1], pfg].median()
         
                 # Store them
-                event_df.loc[event_idx, pfg + 'median_before'] = median_before
-                event_df.loc[event_idx, pfg + 'median_during'] = median_during
-                event_df.loc[event_idx, pfg + 'median_after'] = median_after
+                event_df.loc[event_idx, pfg + '_median_before'] = median_before
+                event_df.loc[event_idx, pfg + '_median_during'] = median_during
+                event_df.loc[event_idx, pfg + '_median_after'] = median_after
                 
                 # Check that the change does not occur before the event
                 if result_index[0] < event['Tmax']:
@@ -208,8 +208,8 @@ for pfg_entity in pfg_entities:
             reaction_duration =  (event_df[pfg + '_end'] - event_df[pfg + '_start']).apply(lambda x: x.total_seconds() / (3600 * 24))
                 
             # Reaction_strength
-            reac_magn =  ((event_df[pfg + 'median_during'] / event_df[pfg + 'median_before']) - 1) * 100
-            relax_magn =  ((event_df[pfg + 'median_after'] / event_df[pfg + 'median_during']) - 1) * 100
+            reac_magn =  ((event_df[pfg + '_median_during'] / event_df[pfg + '_median_before']) - 1) * 100
+            relax_magn =  ((event_df[pfg + '_median_after'] / event_df[pfg + '_median_during']) - 1) * 100
         
             df = pd.DataFrame(data = np.stack([reaction_delay, reaction_duration, reac_magn, relax_magn]).T,\
                               columns = ['reaction_delay', 'reaction_duration', 'reaction_magnitude', 'relaxation_magnitude'])
@@ -223,7 +223,7 @@ for pfg_entity in pfg_entities:
             response = pd.concat([response, df])
                 
         response = response[~response.isna().any(1)]
-        response['pfg'] = response['pfg'].apply(lambda x: str.capitalize(x))
+        response['pfg'] = response['pfg']#.apply(lambda x: str.capitalize(x))
     
         responses[pfg_entity][lagH] = deepcopy(response)
 

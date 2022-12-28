@@ -94,7 +94,7 @@ with open(join('Results','date_pickles','blooms_refs.pickle'), 'wb') as f1:
 # Taking the 90% of the bloom distribution
 #==============================================================================
 
-entity_tracked = 'abundance'
+entity_tracked = 'biomass'
 phyto = pd.read_csv(join('Data','INSITU','PFG_' + entity_tracked + '.csv'),\
                     parse_dates = ['date'], index_col = 'date') 
 

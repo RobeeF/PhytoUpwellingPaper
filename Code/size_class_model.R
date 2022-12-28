@@ -17,9 +17,9 @@ fig.folder = file.path('Figures', 'growth_rates')
 
 setwd(path)
 
-# Phytoplankton group: (to choose in ('ORGNANO', 'ORGPICOPRO', 'REDNANO', 'REDPICOEUK',\
-#'REDPICOPRO')
-pfg = 'ORGNANO'
+# Phytoplankton group: (to choose in ('OraNano', 'OraPicoProk', 'RedNano', 'RedPico',\
+#'RedPicoProk')
+pfg = 'OraNano'
 
 colors = hcl.colors(30, "Zissou 1")
 
@@ -29,7 +29,7 @@ nb.hours = 24
 E.points.per.hour = 6
 
 ## Biomass conversion coefficients
-if (pfg %in% c('ORGPICOPRO', 'REDPICOPRO', 'REDPICOEUK')) {
+if (pfg %in% c('OraPicoProk', 'RedPicoProk', 'RedPico')) {
   a = 0.26
   b = 0.86
 } else {

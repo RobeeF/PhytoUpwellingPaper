@@ -16,21 +16,21 @@ from matplotlib import pyplot as plt
 # Change with your path:
 os.chdir('C:/Users/rfuchs/Documents/GitHub/PhytoUpwelling_paper/')
 
-pfg_colors = dict(zip(['Orgnano', 'Orgpicopro', 'Rednano', 'Redpicoeuk', 'Redpicopro'],\
+pfg_colors = dict(zip(['OraNano', 'OraPicoProk', 'RedNano', 'RedPico', 'RedPicoProk'],\
                       ['#9467bd', '#1f77b4', '#2ca02c', '#d62728', 'orange']))
 
 dates_col = ['WUI_start', 'WUI_end', 'T_start', 'T_end', 'Tmax', 'Tmin',
-       'window_start', 'window_end', 'ORGNANO_start',
-       'ORGNANO_end', 'ORGPICOPRO_start',
-       'ORGPICOPRO_end', 'REDNANO_start', 'REDNANO_end',
-       'REDPICOEUK_start',
-       'REDPICOEUK_end', 'REDPICOPRO_start', 'REDPICOPRO_end']
+       'window_start', 'window_end', 'OraNano_start',
+       'OraNano_end', 'OraPicoProk_start',
+       'OraPicoProk_end', 'RedNano_start', 'RedNano_end',
+       'RedPico_start',
+       'RedPico_end', 'RedPicoProk_start', 'RedPicoProk_end']
 
 ylims = {'reaction_delay': [0,9], 'reaction_duration': [0,9], 'reaction_magnitude': [-100,430],\
          'relaxation_magnitude': [-100,130]}
 
 pfg_entities = ['abundance', 'biomass']
-pfg_list = [pfg.upper() for pfg in pfg_colors.keys()]
+pfg_list = [pfg for pfg in pfg_colors.keys()]
 
 responses = {}
 for pfg_entity in pfg_entities:
@@ -56,8 +56,8 @@ for pfg_entity in pfg_entities:
         reaction_duration =  (event_df[pfg + '_end'] - event_df[pfg + '_start']).apply(lambda x: x.total_seconds() / (3600 * 24))
             
         # Reaction_strength
-        reac_magn =  ((event_df[pfg + 'median_during'] / event_df[pfg + 'median_before']) - 1) * 100
-        relax_magn =  ((event_df[pfg + 'median_after'] / event_df[pfg + 'median_during']) - 1) * 100
+        reac_magn =  ((event_df[pfg + '_median_during'] / event_df[pfg + '_median_before']) - 1) * 100
+        relax_magn =  ((event_df[pfg + '_median_after'] / event_df[pfg + '_median_during']) - 1) * 100
     
         df = pd.DataFrame(data = np.stack([reaction_delay, reaction_duration, reac_magn, relax_magn]).T,\
                           columns = ['reaction_delay', 'reaction_duration', 'reaction_magnitude', 'relaxation_magnitude'])
@@ -69,7 +69,7 @@ for pfg_entity in pfg_entities:
         response = pd.concat([response, df])
             
     response = response[~response.isna().any(1)]
-    response['pfg'] = response['pfg'].apply(lambda x: str.capitalize(x))
+    response['pfg'] = response['pfg']#.apply(lambda x: str.capitalize(x))
 
     responses[pfg_entity] = deepcopy(response)
      
@@ -155,27 +155,27 @@ biomass_df = pd.read_csv(path, parse_dates = dates_col, index_col=['window_start
 
 # Set unindentified ruptures to Nan
 for pfg in pfg_list:
-    col_to_nans = [pfg + 'median_before', pfg + 'median_during', pfg + 'median_after']
+    col_to_nans = [pfg + '_median_before', pfg + '_median_during', pfg + '_median_after']
     abundance_df.loc[abundance_df[pfg + '_phyto_react_before_T'], col_to_nans] = np.nan
     biomass_df.loc[biomass_df[pfg + '_phyto_react_before_T'], col_to_nans] = np.nan
 
-cols_to_keep = ['ORGNANOmedian_before',
-'ORGNANOmedian_during', 'ORGNANOmedian_after', 
-'ORGPICOPROmedian_before', 'ORGPICOPROmedian_during', 
-'ORGPICOPROmedian_after',  'REDNANOmedian_before', 
-'REDNANOmedian_during', 'REDNANOmedian_after', 
-'REDPICOEUKmedian_before', 'REDPICOEUKmedian_during', 
-'REDPICOEUKmedian_after', 'REDPICOPROmedian_before', 
-'REDPICOPROmedian_during', 'REDPICOPROmedian_after']
+cols_to_keep = ['OraNano_median_before',
+'OraNano_median_during', 'OraNano_median_after', 
+'OraPicoProk_median_before', 'OraPicoProk_median_during', 
+'OraPicoProk_median_after',  'RedNano_median_before', 
+'RedNano_median_during', 'RedNano_median_after', 
+'RedPico_median_before', 'RedPico_median_during', 
+'RedPico_median_after', 'RedPicoProk_median_before', 
+'RedPicoProk_median_during', 'RedPicoProk_median_after']
 
-cols_aliases = ['ORGNANO pre-reaction',
-'ORGNANO reaction', 'ORGNANO relaxation', 
-'ORGPICOPRO pre-reaction', 'ORGPICOPRO reaction', 
-'ORGPICOPRO relaxation',  'REDNANO pre-reaction', 
-'REDNANO reaction', 'REDNANO relaxation', 
-'REDPICOEUK pre-reaction', 'REDPICOEUK reaction', 
-'REDPICOEUK relaxation', 'REDPICOPRO pre-reaction', 
-'REDPICOPRO reaction', 'REDPICOPRO relaxation']
+cols_aliases = ['OraNano pre-reaction',
+'OraNano reaction', 'OraNano relaxation', 
+'OraPicoProk pre-reaction', 'OraPicoProk reaction', 
+'OraPicoProk relaxation',  'RedNano pre-reaction', 
+'RedNano reaction', 'RedNano relaxation', 
+'RedPico pre-reaction', 'RedPico reaction', 
+'RedPico relaxation', 'RedPicoProk pre-reaction', 
+'RedPicoProk reaction', 'RedPicoProk relaxation']
 
 # Round and convert to the right unit
 abundance_df = (abundance_df[cols_to_keep] * 10 ** 3).round(2) 

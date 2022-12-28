@@ -40,8 +40,8 @@ c = ['#9467bd', '#1f77b4', '#2ca02c', '#d62728', 'orange']
 ccs = [Line2D([None],[None], color = c[i]) for i in range(5)]
 
 # construct cmap
-pfg_colors = dict(zip(['ORGNANO', 'ORGPICOPRO', 'REDNANO', 'REDPICOEUK',\
-                       'REDPICOPRO'], c))
+pfg_colors = dict(zip(['OraNano', 'OraPicoProk', 'RedNano', 'RedPico',\
+                       'RedPicoProk'], c))
 colors = sns.color_palette("Set3").as_hex()
 
 for entity_tracked in pfg_entities:
@@ -100,25 +100,25 @@ for entity_tracked in pfg_entities:
     # Plotting options depending on the quantity to plot
     # Plotting options depending on the quantity to plot
     if entity_tracked == 'biomass':
-        axis1 = ["REDPICOPRO"]
-        axis1_bis = ['ORGPICOPRO']
-        axis2 = ['REDPICOEUK']
-        axis2_bis = ["REDNANO", "ORGNANO"]
+        axis1 = ["RedPicoProk"]
+        axis1_bis = ['OraPicoProk']
+        axis2 = ['RedPico']
+        axis2_bis = ["RedNano", "OraNano"]
     elif entity_tracked == 'biovolume':
-        axis1 = ["REDPICOPRO", "ORGPICOPRO"]
-        axis1_bis = ['REDPICOEUK']
-        axis2 = ["REDNANO"]
-        axis2_bis = ["ORGNANO"]
+        axis1 = ["RedPicoProk", "OraPicoProk"]
+        axis1_bis = ['RedPico']
+        axis2 = ["RedNano"]
+        axis2_bis = ["OraNano"]
     elif entity_tracked == 'abundance':
-        axis1 = ["REDPICOPRO"]
-        axis1_bis = ["ORGPICOPRO"]
-        axis2 = ["REDPICOEUK", "REDNANO"] 
-        axis2_bis = ["ORGNANO"]
+        axis1 = ["RedPicoProk"]
+        axis1_bis = ["OraPicoProk"]
+        axis2 = ["RedPico", "RedNano"] 
+        axis2_bis = ["OraNano"]
     elif entity_tracked in ['mu', 'NPP']:
-        axis1 = ['REDPICOEUK']
-        axis1_bis = ['ORGPICOPRO', 'REDPICOPRO']
-        axis2 = ['REDNANO']  
-        axis2_bis = ["ORGNANO"]
+        axis1 = ['RedPico']
+        axis1_bis = ['OraPicoProk', 'RedPico']
+        axis2 = ['RedNano']  
+        axis2_bis = ["OraNano"]
     else:
         raise ValueError('Please enter a legal entity to track')
     
@@ -234,7 +234,7 @@ for entity_tracked in pfg_entities:
                         labelbottom=False,
                         rotation = 45)   
             
-        fig.legend(ccs, [c.capitalize() for c in phyto.columns],\
+        fig.legend(ccs, [c for c in phyto.columns],\
                    loc="lower center", bbox_to_anchor=(0.5, -0.05),\
                    ncol = 5, fontsize = 9)
         fig.tight_layout()

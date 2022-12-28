@@ -81,20 +81,20 @@ nb_subplots = 3
 
 # Plotting options depending on the quantity to plot
 if entity_tracked == 'biomass':
-    axis1 = ["REDPICOPRO"]
-    axis1_bis = ['ORGPICOPRO']
-    axis2 = ["REDPICOEUK"]
-    axis2_bis = ['REDNANO', "ORGNANO"]
+    axis1 = ["RedPicoProk"]
+    axis1_bis = ['OraPicoProk']
+    axis2 = ["RedPico"]
+    axis2_bis = ['RedNano', "OraNano"]
 elif entity_tracked == 'abundance':
-    axis1 = ["REDPICOPRO"]
-    axis1_bis = ["ORGPICOPRO"]
-    axis2 = ["REDPICOEUK", "REDNANO"] 
-    axis2_bis = ["ORGNANO"]
+    axis1 = ["RedPicoProk"]
+    axis1_bis = ["OraPicoProk"]
+    axis2 = ["RedPico", "RedNano"] 
+    axis2_bis = ["OraNano"]
 elif entity_tracked in ['mu', 'NPP']:
-    axis1 = ['REDPICROPRO', 'REDPICOEUK']
-    axis1_bis = ['ORGPICOPRO']
-    axis2 = ['REDNANO']  
-    axis2_bis = ["ORGNANO"]
+    axis1 = ['RedPicoProk', 'RedPico']
+    axis1_bis = ['OraPicoProk']
+    axis2 = ['RedNano']  
+    axis2_bis = ["OraNano"]
 else:
     raise ValueError('Please enter a legal entity to track')
 
