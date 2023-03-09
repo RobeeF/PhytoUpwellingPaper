@@ -15,7 +15,8 @@ from os.path import join
 os.chdir('C:/Users/rfuchs/Documents/GitHub/PhytoUpwelling_paper/')
 
 from Code.utilities import is_stratified
-pfgs = ['ORGNANO', 'ORGPICOPRO', 'REDNANO', 'REDPICOEUK', 'REDPICOPRO']
+#pfgs = ['ORGNANO', 'ORGPICOPRO', 'REDNANO', 'REDPICOEUK', 'REDPICOPRO']
+pfgs = ['OraNano','OraPicoProk','RedNano','RedPico','RedPicoProk']
 
 #==============================================================
 # Import data
@@ -23,12 +24,12 @@ pfgs = ['ORGNANO', 'ORGPICOPRO', 'REDNANO', 'REDPICOEUK', 'REDPICOPRO']
 
 # Use mean data rather than median data
 reactions = pd.read_csv('Results/responses/biomass.csv',\
-            parse_dates = ['WUI_start', 'WUI_end', 'T_start', 'T_end',\
-                   'Tmax', 'Tmin', 'window_start', 'window_end',\
-                   'ORGNANO_start', 'ORGNANO_end', 'ORGPICOPRO_start',
-                   'ORGPICOPRO_end', 'REDNANO_start', 'REDNANO_end',\
-                   'REDPICOEUK_start', 'REDPICOEUK_end',\
-                   'REDPICOPRO_start', 'REDPICOPRO_end'])
+            parse_dates = ['WUI_start', 'WUI_end', 'T_start', 'T_end', 'Tmax', 'Tmin',
+                   'window_start', 'window_end', 'OraNano_start',
+                   'OraNano_end', 'OraPicoProk_start',
+                   'OraPicoProk_end', 'RedNano_start', 'RedNano_end',
+                   'RedPico_start',
+                   'RedPico_end', 'RedPicoProk_start', 'RedPicoProk_end'])
 
 
 biomass = pd.read_csv('Data/INSITU/PFG_biomass.csv', parse_dates = ['date'],\
@@ -58,6 +59,7 @@ with open(join(pickle_dir,'blooms_refs.pickle'), 'rb') as f1:
 #==============================================================
 
 dbiomass_dt = pd.DataFrame(index = reactions['window_start'], columns = pfgs)
+dbiomass = pd.DataFrame(index = reactions['window_start'], columns = pfgs)
 
 for idx, event in reactions.iterrows():
     for pfg in pfgs:
@@ -75,8 +77,10 @@ for idx, event in reactions.iterrows():
         
         ref_data = biomass.loc[event['window_start']: event[pfg + '_start'], pfg].interpolate(method = 'polynomial', order = 1)
         b_ref = trapz(ref_data.dropna())
-        b_ref = dt1 * b_ref / dt_ref # Make it comparable
+        
+        dbiomass.loc[event['window_start'], pfg] = (b_pfg - b_ref) 
 
+        b_ref = dt1 * b_ref / dt_ref # Make it comparable
         dbiomass_dt.loc[event['window_start'], pfg] = (b_pfg - b_ref) / dt1
         
     
@@ -85,6 +89,7 @@ for idx, event in reactions.iterrows():
 #==============================================================
 
 dblooms_dt = {'2020': [], '2021': []}
+dblooms = {'2020': [], '2021': []}
 
 for year in ['2020', '2021']:
     refs = blooms_refs[year]
@@ -100,20 +105,30 @@ for year in ['2020', '2021']:
         b_dt = b_dt.apply(lambda x: trapz(x.dropna())) 
         
         b_ref = biomass.loc[refs[bloom_idx][0]:refs[bloom_idx][1]].interpolate(method = 'polynomial', order = 1)
-        b_ref = dt_bloom * b_ref.apply(lambda x: trapz(x.dropna())) / dt_ref
-        
-        delta = (b_dt - b_ref).sum()
+        b_ref = b_ref.apply(lambda x: trapz(x.dropna()))
+        dblooms[year].append((b_dt - b_ref).sum())
 
-        dblooms_dt[year].append(delta / dt_bloom)
+        b_ref = dt_bloom * b_ref / dt_ref
+        dblooms_dt[year].append((b_dt - b_ref).sum() / dt_bloom)
  
 #==============================================================
 # Results
 #==============================================================
 
+
+b_ratio = dbiomass.loc[pd.to_datetime('2019-11-06 17:00:00')].sum() / dblooms['2020'][0]
+b_ratio = (100 * b_ratio).round(1)
+print('The total increase in biomass during the biggest event was of', b_ratio,\
+      '% with respect to the corresponding year spring bloom')
+    
+
 b_dt_ratio = dbiomass_dt.loc[pd.to_datetime('2020-06-18 01:00:00')].sum() / dblooms_dt['2020'][0]
 b_dt_ratio = (100 * b_dt_ratio).round(1)
 print('The per unit of time increase in biomass during the biggest event was of', b_dt_ratio,\
       '% with respect to the corresponding year spring bloom')
+    
 
 # The 2020-09-23 19:00:00 event presented an even higher increase but presented too many NAs
-
+a = dbiomass_dt.loc[pd.to_datetime('2020-01-01 01:00:00'):pd.to_datetime('2021-01-01 01:00:00')].sum(1) / dblooms_dt['2020'][0]
+b = dbiomass_dt.loc[pd.to_datetime('2021-01-01 01:00:00'):pd.to_datetime('2022-01-01 01:00:00')].sum(1) / dblooms_dt['2021'][0]
+a.max()

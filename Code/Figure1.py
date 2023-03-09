@@ -18,7 +18,7 @@ from matplotlib.lines import Line2D
 os.chdir('C:/Users/rfuchs/Documents/GitHub/PhytoUpwelling_paper/')
 
 # Choose a quantity to track: biomass or abundance, mu
-entity_tracked = 'abundance'
+entity_tracked = 'biomass'
 
 #==============================================================================
 # Data Importation
@@ -86,20 +86,20 @@ colors = sns.color_palette("Set3").as_hex()
 
 # Plotting options depending on the quantity to plot
 if entity_tracked == 'biomass':
-    axis1 = ["REDPICOPRO"]
-    axis1_bis = ['ORGPICOPRO']
-    axis2 = ["REDPICOEUK"]
-    axis2_bis = ['REDNANO', "ORGNANO"]
+    axis1 = ["RedPicoProk"]
+    axis1_bis = ['OraPicoProk']
+    axis2 = ["RedPico"]
+    axis2_bis = ['RedNano', "OraNano"]
 elif entity_tracked == 'abundance':
-    axis1 = ["REDPICOPRO"]
-    axis1_bis = ["ORGPICOPRO"]
-    axis2 = ["REDPICOEUK", "REDNANO"] 
-    axis2_bis = ["ORGNANO"]
+    axis1 = ["RedPicoProk"]
+    axis1_bis = ["OraPicoProk"]
+    axis2 = ["RedPico", "RedNano"] 
+    axis2_bis = ["OraNano"]
 elif entity_tracked in ['mu', 'NPP']:
-    axis1 = ['REDPICROPRO', 'REDPICOEUK']
-    axis1_bis = ['ORGPICOPRO']
-    axis2 = ['REDNANO']  
-    axis2_bis = ["ORGNANO"]
+    axis1 = ['RedPicoProk', 'RedPico']
+    axis1_bis = ['OraPicoProk']
+    axis2 = ['RedNano']  
+    axis2_bis = ["OraNano"]
 else:
     raise ValueError('Please enter a legal entity to track')
 
@@ -320,7 +320,7 @@ for i, year in enumerate(years):
 # Create the legends at the bottom of the image
 ccs = [Line2D([None],[None], color = c[i]) for i in range(5)]
 
-fig.legend(ccs, [p.capitalize() for p in phyto.columns],\
+fig.legend(ccs, [p for p in phyto.columns],\
            loc="lower center", bbox_to_anchor=(0.5, -0.05), ncol = 5)
 
 fig.tight_layout()

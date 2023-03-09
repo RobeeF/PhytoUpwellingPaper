@@ -68,6 +68,12 @@ for event_idx, event in event_df.iterrows():
         axs[ax_nb].axvspan(event['WUI_start'], event['WUI_end'],\
                            facecolor= color, alpha=0.3)
 
+        for s in unstrat[:-1]:
+            axs[ax_nb].axvline(s[0], color = 'black')
+            axs[ax_nb].axvline(s[1], color = 'black')
+        axs[ax_nb].axvline(unstrat[-1][0], color = 'black')
+        
+
 fig.tight_layout()
 plt.savefig(join('Figures','all_nutrients.png'))
 plt.show()
@@ -212,5 +218,70 @@ for idx, event in event_df.iterrows():
 
     fig.tight_layout()
     fig_root = join('Figures', 'individual_events', 'SN')
-    plt.savefig(join(fig_root, str(event[0])[:10] + '_' + str(event[1])[:10] + '.png'))
+    #plt.savefig(join(fig_root, str(event[0])[:10] + '_' + str(event[1])[:10] + '.png'))
     plt.show()
+
+
+#=========================================================================
+# Summary table
+#=========================================================================
+
+sn_summary = pd.DataFrame()
+
+# !!! Adapt the end of the event
+pre_offset = pd.Timedelta("5D")
+post_offset = pd.Timedelta("5D")
+
+n_sn = sn.shape[1]
+for idx, event in event_df.iterrows():
+    # Fetch the data
+    ## Before
+    sn_before = sn.loc[(sn.index >= event['Tmax'] - pre_offset)\
+                & (sn.index <= event['Tmax'])].mean()
+    if len(sn_before):
+        sn_before = pd.DataFrame(data = [sn_before.values],\
+                     columns = [col + ' pre-anomaly' for col in sn.columns])
+    else:
+        sn_before = pd.DataFrame(data = [np.full(n_sn, np.nan)],\
+                     columns = [col + ' pre-anomaly' for col in sn.columns])
+
+    ## During
+    sn_during = sn.loc[(sn.index >= event['Tmax'])\
+                & (sn.index <= event['T_end'])].mean()
+    if len(sn_during):
+        sn_during = pd.DataFrame(data = [sn_during.values],\
+                 columns = [col + ' anomaly' for col in sn.columns])
+    else:
+        sn_during = pd.DataFrame(data = [np.full(n_sn, np.nan)],\
+                     columns = [col + ' anomaly' for col in sn.columns])
+        
+    ## After
+    sn_after = sn.loc[(sn.index >= event['T_end'])\
+                    & (sn.index <= event['T_end'] + post_offset)].mean()
+    if len(sn_after):
+        sn_after = pd.DataFrame(data = [sn_after.values],\
+                 columns = [col + ' post-anomaly' for col in sn.columns])
+    else:
+        sn_after = pd.DataFrame(data = [np.full(n_sn, np.nan)],\
+                     columns = [col + ' post-anomaly' for col in sn.columns])
+    
+    # Format the data
+    event_summary = pd.concat([sn_before, sn_during, sn_after], axis = 1)
+    event_summary['window_start'] = event['window_start'] # !!! Voir si on garde
+    event_summary['window_end'] = event['window_end'] # !!! Voir si on garde
+    
+    event_summary = event_summary.reset_index(drop = True)
+    sn_summary = pd.concat([sn_summary, event_summary])
+
+sn_summary = sn_summary[['window_start', 'window_end', 'nitrates pre-anomaly',
+                      'nitrates anomaly', 'nitrates post-anomaly',
+                      'nitrites pre-anomaly', 'nitrites anomaly', 
+                      'nitrites post-anomaly', 'phosphates pre-anomaly', 
+                      'phosphates anomaly', 'phosphates post-anomaly', 
+                      'Ammonium pre-anomaly', 'Ammonium anomaly',
+                      'Ammonium post-anomaly', 'N/P pre-anomaly',
+                      'N/P anomaly', 'N/P post-anomaly']].round(2)
+# !!! Changer le nom window_start ?
+
+sn_summary = sn_summary.replace([np.inf, -np.inf], np.nan)
+sn_summary.to_csv(join('Results', 'sn_all_events.csv'), index = False)

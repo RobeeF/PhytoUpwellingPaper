@@ -227,7 +227,7 @@ event_df = pd.read_csv(join('..','Results','event_T_anomalies_suited.csv'),\
                        'T_start', 'T_end', 'Tmax', 'Tmin',\
                        'window_start', 'window_end'])
     
-pfg_colors = dict(zip(['Orgnano', 'Orgpicopro', 'Rednano', 'Redpicoeuk', 'Redpicopro'],\
+pfg_colors = dict(zip(['OraNano', 'OraPicoProk', 'RedNano', 'RedPico', 'RedPicoProk'],\
                       ['#9467bd', '#1f77b4', '#2ca02c', '#d62728', 'orange']))
 
 
@@ -247,9 +247,9 @@ for pfg_entity in pfg_entities:
         event_df[pfg + '_start'] = pd.NaT
         event_df[pfg + '_end'] = pd.NaT
         event_df[pfg + '_phyto_react_before_T'] = np.nan
-        event_df[pfg + 'median_before'] = np.nan
-        event_df[pfg + 'median_during'] = np.nan
-        event_df[pfg + 'median_after'] = np.nan
+        event_df[pfg + '_median_before'] = np.nan
+        event_df[pfg + '_median_during'] = np.nan
+        event_df[pfg + '_median_after'] = np.nan
          
     #====================================
     # Iterate through the events
@@ -308,9 +308,9 @@ for pfg_entity in pfg_entities:
             median_after = pfg_data.loc[pfg_data.index >= result_index[1], pfg].median()
     
             # Store them
-            event_df.loc[event_idx, pfg + 'median_before'] = median_before
-            event_df.loc[event_idx, pfg + 'median_during'] = median_during
-            event_df.loc[event_idx, pfg + 'median_after'] = median_after
+            event_df.loc[event_idx, pfg + '_median_before'] = median_before
+            event_df.loc[event_idx, pfg + '_median_during'] = median_during
+            event_df.loc[event_idx, pfg + '_median_after'] = median_after
             
             # Check that the change does not occur before the event
             if result_index[0] < event['Tmax']: #+ pd.Timedelta('2H') * 3:

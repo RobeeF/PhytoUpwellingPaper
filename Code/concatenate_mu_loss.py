@@ -19,7 +19,8 @@ os.chdir('C:/Users/rfuchs/Documents/GitHub/PhytoUpwelling_paper')
 
 ssPop_params_dir = 'C:/Users/rfuchs/Documents/These/Oceano/Upwellings/results/growth_rates/'
 
-pfgs = ['ORGNANO', 'ORGPICOPRO', 'REDNANO', 'REDPICOEUK', 'REDPICOPRO']
+#pfgs = ['ORGNANO', 'ORGPICOPRO', 'REDNANO', 'REDPICOEUK', 'REDPICOPRO']
+pfgs = ['OraNano','OraPicoProk','RedNano','RedPico','RedPicoProk']
 
 mu_all = pd.DataFrame()
 for idx, pfg in enumerate(pfgs):

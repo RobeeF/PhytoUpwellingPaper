@@ -49,7 +49,7 @@ conv = {entity: 1 for entity in list(units.keys())}
 conv['abundance'] = 10 ** 3
 conv['biomass'] = 10 ** -9
 
-pfg_list = ['ORGNANO', 'ORGPICOPRO', 'REDNANO', 'REDPICOEUK', 'REDPICOPRO']
+pfg_list = ['OraNano', 'OraPicoProk', 'RedNano', 'RedPico', 'RedPicoProk']
         
 #=========================================================================
 # Get the indices of the sn in stratified wo up, with up and unstratified
@@ -97,7 +97,7 @@ iqr = (q3 - q1)#.round(2)
 stats = (median.astype(str) + " (" + iqr.astype(str) + ')').T
 
 stats = stats[['Unstratified', 'Stratified (events)', 'Stratified (Non-events)']]
-stats.index = stats.index.str.capitalize()
+stats.index = stats.index
 
 stats.to_csv(join('Results', entity_tracked + '_stratification.csv'))
 
